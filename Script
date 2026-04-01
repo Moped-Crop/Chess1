@@ -1,3 +1,5 @@
+window.onload = function () {
+
 let position = [
 "rnbqkbnr",
 "pppppppp",
@@ -9,18 +11,17 @@ let position = [
 "RNBQKBNR"
 ];
 
-let selected = null;
-let turn = "white";
-
 const board = document.getElementById("board");
 
-const pieces = {
-  r:"♜", n:"♞", b:"♝", q:"♛", k:"♚", p:"♟",
-  R:"♖", N:"♘", B:"♗", Q:"♕", K:"♔", P:"♙"
-};
+if(!board){
+  alert("Нет div id=board в HTML");
+  return;
+}
 
-const isWhite = p => p === p.toUpperCase();
-const isBlack = p => p === p.toLowerCase();
+const pieces = {
+ r:"♜", n:"♞", b:"♝", q:"♛", k:"♚", p:"♟",
+ R:"♖", N:"♘", B:"♗", Q:"♕", K:"♔", P:"♙"
+};
 
 function draw(){
   board.innerHTML = "";
@@ -28,61 +29,26 @@ function draw(){
   for(let r=0;r<8;r++){
     for(let c=0;c<8;c++){
       let cell = document.createElement("div");
-      cell.className = "cell " + ((r+c)%2 ? "black":"white");
+      cell.style.width = "50px";
+      cell.style.height = "50px";
+      cell.style.display = "flex";
+      cell.style.alignItems = "center";
+      cell.style.justifyContent = "center";
+      cell.style.fontSize = "30px";
+
+      cell.style.background = (r+c)%2 ? "#769656" : "#eeeed2";
 
       let piece = position[r][c];
       cell.innerText = pieces[piece] || "";
-
-      cell.onclick = () => click(r,c);
 
       board.appendChild(cell);
     }
   }
 }
 
-function click(r,c){
-  let target = position[r][c];
+draw();
 
-  // выбор фигуры
-  if(selected === null){
-    if(target === " ") return;
-
-    let p = target;
-
-    if(turn === "white" && !isWhite(p)) return;
-    if(turn === "black" && !isBlack(p)) return;
-
-    selected = {r,c};
-    return;
-  }
-
-  let from = position[selected.r][selected.c];
-
-  // запрет на свои фигуры
-  if(target !== " "){
-    if(isWhite(from) && isWhite(target)) { selected = null; return; }
-    if(isBlack(from) && isBlack(target)) { selected = null; return; }
-  }
-
-  // проверка ХОДОВ ФИГУР
-  if(!isLegalMove(selected.r, selected.c, r, c)){
-    selected = null;
-    return;
-  }
-
-  // делаем ход
-  position[r] = replaceChar(position[r], c, from);
-  position[selected.r] = replaceChar(position[selected.r], selected.c, " ");
-
-  selected = null;
-  turn = (turn === "white") ? "black" : "white";
-
-  draw();
-}
-
-function replaceChar(str, i, char){
-  return str.substring(0,i) + char + str.substring(i+1);
-}
+};
 
 
 
