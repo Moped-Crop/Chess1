@@ -1,0 +1,39 @@
+let turn = "white";
+
+const isWhite = p => p === p.toUpperCase();
+const isBlack = p => p === p.toLowerCase();
+
+function click(r,c){
+  let piece = position[r][c];
+
+  // выбор фигуры
+  if(selected === null){
+    if(piece === " ") return;
+
+    if(turn === "white" && !isWhite(piece)) return;
+    if(turn === "black" && !isBlack(piece)) return;
+
+    selected = {r,c};
+    return;
+  }
+
+  // попытка хода
+  let from = position[selected.r][selected.c];
+
+  // нельзя бить свои
+  if(piece !== " "){
+    if(isWhite(from) && isWhite(piece)) { selected = null; return; }
+    if(isBlack(from) && isBlack(piece)) { selected = null; return; }
+  }
+
+  // делаем ход
+  position[r] = replaceChar(position[r], c, from);
+  position[selected.r] = replaceChar(position[selected.r], selected.c, " ");
+
+  selected = null;
+
+  // смена хода
+  turn = (turn === "white") ? "black" : "white";
+
+  draw();
+}
